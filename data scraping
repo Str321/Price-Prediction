@@ -1,0 +1,66 @@
+# WEB SCRAPING FROM AUTOPORTAL WEBSITE
+
+from bs4 import BeautifulSoup
+import requests
+import pandas as pd
+
+
+name= []
+price=[]
+location=[]
+model=[]
+kms=[]
+fuel=[]
+alll=[]
+
+page = 2
+while page !=352:
+    url = f'https://autoportal.com/usedcars/finder/page-{page}/'
+    response = requests.get(url)
+    html = response.content
+    soup = BeautifulSoup(html, "lxml")
+    
+    # to get names
+    for a in soup.find_all('a',class_="link"):
+        name.append(a.get_text(strip=True))
+        
+    # price of cars    
+    for p in soup.find_all('p',class_='price'):
+        price.append(p.get_text(strip=True))
+        
+    # cars location    
+    for span in soup.find_all('span',class_='city'):
+        location.append(span.get_text(strip=True))
+        
+    # car model,kms driven, fuel type
+    for div in soup.find_all('div',class_="desc desc-info"):
+        alll.append(div.get_text(strip=True))
+    page = page + 1
+
+for j in alll:
+
+    n=j.replace('\xa0\x95\xa0','').split(' ')
+
+    # kms driven
+    kms.append(n[0]) 
+
+    # model of year
+    model.append(n[-1]) 
+    
+    # fuel
+    
+    type
+    if n[3]=='Petrol' or 'Diesel':
+        fuel.append(n[3])
+    else:
+        fuel.append('NaN')
+        
+# price formatting
+prc=[]
+for i in price:
+    s=i.split(' ')
+    prc.append(s[0])
+car_dat={'name':name,'location':location,'model':model,'fuel_type':fuel,'kms_driven':kms,'price_in_lakhs':prc}
+
+df=pd.DataFrame(car_dat)
+df.to_csv('trainingcar.csv')
