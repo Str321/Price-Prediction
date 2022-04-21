@@ -1,0 +1,28 @@
+# model selection 
+l=[rf,lr,dt,xg,ls,rg]
+
+file=open('predictedcar_score.txt','a')
+for i in l:
+    pipe=make_pipeline(cl_trf,i)
+    pipe.fit(x,y_fn)
+
+    pred=pipe.predict(x_ts)
+    
+    pred1=pipe.predict(x)
+    
+    file.write(f'Prediction for test data\n\tfor {i}\n\t R2 score is {r2_score(pred,y_fs)}\nmean squared error is {np.sqrt(mean_squared_error(pred,y_fs))}\nPrediction for train data\n\tfor {i}\n\t R2 score is {r2_score(pred1,y_fn)}\mean squared error is {np.sqrt(mean_squared_error(pred1,y_fn))}\n')
+file.close
+
+file=open('predictedcar_score.txt','r')
+print(file.read())
+
+
+
+                              TEST    TEST     TRAIN     TRAIN
+MODELS                     R2_SCORE	  MSE	    R2_SCORE	 MSE
+
+Linear Regression         	0.87692	 0.1767	  0.928757	0.14268
+Decision Tree Regressor     0.70694	 0.2739	  0.999933	0.00450
+Lasso	                     -8.87280	 0.5291	 -9.701643	0.55329
+Ridge	                      0.83175  0.1938	  0.891579	0.16397
+Random Forest Regressor   	0.72183	 0.2384	  0.961416	0.09922
